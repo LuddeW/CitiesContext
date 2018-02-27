@@ -1,0 +1,12 @@
+D:\Workspace\CitiesConext\bin\Release\CitiesConext.dll
+D:\Workspace\CitiesConext\bin\Release\CitiesConext.pdb
+D:\Workspace\CitiesConext\bin\Release\Assembly-CSharp.dll
+D:\Workspace\CitiesConext\bin\Release\ColossalManaged.dll
+D:\Workspace\CitiesConext\bin\Release\ICities.dll
+D:\Workspace\CitiesConext\bin\Release\UnityEngine.dll
+D:\Workspace\CitiesConext\bin\Release\PopsApiWrapper.dll
+D:\Workspace\CitiesConext\bin\Release\Assembly-CSharp-firstpass.dll
+D:\Workspace\CitiesConext\bin\Release\ICSharpCode.SharpZipLib.dll
+D:\Workspace\CitiesConext\obj\Release\CitiesConext.csprojResolveAssemblyReference.cache
+D:\Workspace\CitiesConext\obj\Release\CitiesConext.dll
+D:\Workspace\CitiesConext\obj\Release\CitiesConext.pdb
