@@ -52,6 +52,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Source\EconomyEngine.cs" />
     <Compile Include="Source\GoogleApiHandler.cs" />
     <Compile Include="Source\Loader.cs" />
     <Compile Include="Source\Mod.cs" />
