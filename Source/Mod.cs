@@ -22,7 +22,7 @@ namespace CitiesConext
         {
             get
             {
-                return "MHMHHHMH HERROW Worrd";
+                return "CitiesContext";
             }
         }
     }
