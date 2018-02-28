@@ -11,10 +11,20 @@ namespace CitiesConext.Source
 {
     public class Loader : LoadingExtensionBase
     {
+        GoogleApiHandler googleApiHandler;
+
+        EconomyEngine economyEngine;
+
         public override void OnLevelLoaded(LoadMode mode)
         {
-            GoogleApiHandler googleApiHandler = new GoogleApiHandler();
+            googleApiHandler = new GoogleApiHandler();
             googleApiHandler.SendRefreshTokenRequestRequest();
+
+            economyEngine = new EconomyEngine();
+            economyEngine.SetMoneyAmount(500000);
+            economyEngine.SetTaxMultiplier(100);
+
+            base.OnLevelLoaded(mode); //Needed?
         }
     }
 }
