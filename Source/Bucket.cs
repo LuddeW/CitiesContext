@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace CitiesConext
 {
-    class StepModel
+    public class Bucket
     {
-
+        public string startTimeMillis;
+        public string endTimeMillis;
+        public string bucket;
     }
 }
