@@ -37,6 +37,16 @@ namespace CitiesConext
             DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "ApiHandler construtor has finished.");
         }
 
+        void InitAcessRequest(string token)
+        {
+            myHttpWebRequest = (HttpWebRequest)WebRequest.Create("https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate");
+            myHttpWebRequest.Method = WebRequestMethods.Http.Post;
+            myHttpWebRequest.ContentType = "application/x-www-form-urlencoded";
+            myHttpWebRequest.Headers.Add("Authorization", "Bearer " + token);
+            myHttpWebRequest.ContentType = "application/json";
+            postData =  "{ 'aggregateBy': [{'dataTypeName':'com.google.step_count.delta','dataSourceId':'derived:com.google.step_count.delta:com.google.android.gms:estimated_steps'}],'bucketByTime':{'durationMillis':86400000},'startTimeMillis':" + yesterday + ",'endTimeMillis':" + now + "}";
+        }
+
         public void SendRefreshTokenRequestRequest()
         {
             ServicePointManager.ServerCertificateValidationCallback = MyRemoteCertificateValidationCallback;
@@ -70,6 +80,8 @@ namespace CitiesConext
             
             DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, model.access_token);
 
+            SendAccessTokenRequest(model.access_token);
+
         }
 
         public bool MyRemoteCertificateValidationCallback(System.Object sender,
@@ -99,6 +111,40 @@ namespace CitiesConext
                 }
             }
             return isOk;
+        }
+        public void SendAccessTokenRequest(string token)
+        {
+            InitAcessRequest(token);
+            ServicePointManager.ServerCertificateValidationCallback = MyRemoteCertificateValidationCallback;
+            UTF8Encoding encoder = new UTF8Encoding();
+            byte[] stepdata = encoder.GetBytes(postData);            
+            myHttpWebRequest.ContentLength = stepdata.Length;
+
+            Stream newStream;
+
+            try
+            {
+                newStream = myHttpWebRequest.GetRequestStream();
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+
+            newStream.Write(stepdata, 0, stepdata.Length);
+            newStream.Close();
+
+            WebResponse response = myHttpWebRequest.GetResponse();
+
+            newStream = response.GetResponseStream();
+
+            StreamReader reader = new StreamReader(newStream);
+
+            string responseFromServer = reader.ReadToEnd();
+
+            Bucket bucket = UnityEngine.JsonUtility.FromJson<Bucket>(responseFromServer);
+
+            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, bucket.startTimeMillis);
         }
     }
 }
