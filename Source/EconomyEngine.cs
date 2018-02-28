@@ -2,7 +2,7 @@
 using System;
 
 
-namespace CitiesConext.Source
+namespace CitiesConext
 {
     class EconomyEngine
     {

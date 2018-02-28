@@ -1,4 +1,4 @@
-﻿using CitiesConext.Source;
+﻿
 using ColossalFramework.Plugins;
 using Newtonsoft.Json.Linq;
 using System;
@@ -77,7 +77,7 @@ namespace CitiesConext
         {
             bool isOk = true;
             // If there are errors in the certificate chain,
-            // look at each error to determine the cause.
+            // look at each error to determine thes cause.
             if (sslPolicyErrors != SslPolicyErrors.None)
             {
                 for (int i = 0; i < chain.ChainStatus.Length; i++)

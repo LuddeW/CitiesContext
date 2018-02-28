@@ -7,7 +7,7 @@ using ColossalFramework;
 using ICities;
 using System.Web.Script.Serialization;
 
-namespace CitiesConext.Source
+namespace CitiesConext
 {
     public class Loader : LoadingExtensionBase
     {
