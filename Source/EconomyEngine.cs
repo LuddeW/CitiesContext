@@ -29,11 +29,10 @@ namespace CitiesConext
                 var incomeField = type.GetField("m_income", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
                 
                 long[] currentIncome = (long[])(incomeField.GetValue(EconomyManager.instance));
-                //for (int i = 0; i < currentIncome.Length; i++)
+                //for (int i = 0; i < length; i++)
                 //{
-                //    DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "Current income is " + currentIncome[i]);
-                //}
 
+                //}
                 incomeField.SetValue(EconomyManager.instance, 10000);
             }
             catch (Exception e)
