@@ -1,10 +1,15 @@
-﻿using ColossalFramework.Plugins;
+﻿using CitiesConext.Source;
+using ColossalFramework.Plugins;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Web.Script.Serialization;
 
 namespace CitiesConext
 {
@@ -35,44 +40,25 @@ namespace CitiesConext
         public void SendRefreshTokenRequestRequest()
         {
             ServicePointManager.ServerCertificateValidationCallback = MyRemoteCertificateValidationCallback;
-
-            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "Entering SendRefresh()");
             UTF8Encoding encoding = new UTF8Encoding();
             byte[] byte1 = encoding.GetBytes(postData);
             myHttpWebRequest.ContentLength = byte1.Length;
 
-            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "Creating newStream");
-
             Stream newStream;
 
-            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "new stream has ben initialized");
             try
             {
-                DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "Trying to set newStream to httpreq.getreq()");
                 newStream = myHttpWebRequest.GetRequestStream();
-                DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "New stream = " + newStream.ToString());
             }
             catch (Exception e)
             {
-                DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "newStream Could not be created because " + e);
                 throw;
             }
 
-            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "NewStream Created!");
             newStream.Write(byte1, 0, byte1.Length);
-            if (newStream == null)
-            {
-                DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "NewStream is null and can't be closed");
-            }
             newStream.Close();
 
-            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "Request has been sent...");
-
             WebResponse response = myHttpWebRequest.GetResponse();
-
-            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "getResponse() has been called...");
-
-            //Console.WriteLine(((HttpWebResponse)response).StatusDescription); //Get the status code
 
             newStream = response.GetResponseStream();
 
@@ -80,16 +66,9 @@ namespace CitiesConext
 
             string responseFromServer = reader.ReadToEnd();
 
-            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "Stream has been read...");
-
-            //Console.WriteLine(responseFromServer); //Get the response
-            if (responseFromServer == null)
-            {
-                DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "Reponse from server is was null");
-            }
-            else
-                DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, responseFromServer);
-
+            AcessKeyModel model = UnityEngine.JsonUtility.FromJson<AcessKeyModel>(responseFromServer);
+            
+            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, model.access_token);
 
         }
 
