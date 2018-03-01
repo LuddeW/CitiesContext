@@ -141,12 +141,6 @@ namespace CitiesConext
                     //JSONNode node = JSONNode.Parse(str);
 
                     DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, step);
-
-
-
-
-
-
                 }
             }
 
