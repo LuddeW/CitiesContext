@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ColossalFramework;
+﻿using ColossalFramework.Plugins;
 using ICities;
-using System.Web.Script.Serialization;
 
 namespace CitiesConext
 {
@@ -18,7 +12,7 @@ namespace CitiesConext
         public override void OnLevelLoaded(LoadMode mode)
         {
             googleApiHandler = new GoogleApiHandler();
-            googleApiHandler.SendRefreshTokenRequestRequest();
+            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, googleApiHandler.GetSteps().ToString());
 
             economyEngine = new EconomyEngine();
             economyEngine.SetMoneyAmount(500000);
