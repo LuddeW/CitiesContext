@@ -1,14 +1,11 @@
 ﻿using ColossalFramework.Plugins;
 using SimpleJSON;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Web.Script.Serialization;
 
 namespace CitiesConext
 {
@@ -132,16 +129,23 @@ namespace CitiesConext
                 using (var sr = new StreamReader(response.GetResponseStream()))
                 {
                     string str = sr.ReadToEnd();
+
+                    string step = getBetween(str, "intVal\": ", ",");
+
                     Bucket bucket = UnityEngine.JsonUtility.FromJson<Bucket>(str);
 
-                    DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, str);
+                    //DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, str);
+                    ////JSONObject json = new JSONObject();
+                    ////json.Add("root", JSON.Parse(str));
                     //JSONObject json = new JSONObject();
-                    //json.Add("root", JSON.Parse(str));
-                    JSONObject json = new JSONObject();
-         
-                    //dynamic d = JSON.Parse(str);
-                    //string steps = d.bucket[0].dataset[0].point[0].value[0].intVal;
-                    DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, json.ToString());
+                    //JSONNode node = JSONNode.Parse(str);
+
+                    DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, step);
+
+
+
+
+
 
                 }
             }
@@ -153,6 +157,21 @@ namespace CitiesConext
             
 
             
+        }
+
+        public static string getBetween(string strSource, string strStart, string strEnd)
+        {
+            int Start, End;
+            if (strSource.Contains(strStart) && strSource.Contains(strEnd))
+            {
+                Start = strSource.IndexOf(strStart, 0) + strStart.Length;
+                End = strSource.IndexOf(strEnd, Start);
+                return strSource.Substring(Start, End - Start);
+            }
+            else
+            {
+                return "";
+            }
         }
     }
 }
