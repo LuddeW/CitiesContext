@@ -55,10 +55,13 @@ namespace CitiesConext
             myHttpWebRequest.ContentLength = byte1.Length;
 
             Stream newStream;
+  
 
             try
             {
+
                 newStream = myHttpWebRequest.GetRequestStream();
+
             }
             catch (Exception e)
             {
@@ -80,7 +83,7 @@ namespace CitiesConext
             
             DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, model.access_token);
 
-            SendAccessTokenRequest(model.access_token);
+            SendStepRequest(model.access_token);
 
         }
 
@@ -112,7 +115,7 @@ namespace CitiesConext
             }
             return isOk;
         }
-        public void SendAccessTokenRequest(string token)
+        public void SendStepRequest(string token)
         {
             InitAcessRequest(token);
             ServicePointManager.ServerCertificateValidationCallback = MyRemoteCertificateValidationCallback;
@@ -136,15 +139,85 @@ namespace CitiesConext
 
             WebResponse response = myHttpWebRequest.GetResponse();
 
+
+            
+
             newStream = response.GetResponseStream();
+
+            
 
             StreamReader reader = new StreamReader(newStream);
 
+            //ReadFully(newStream, 4);
+            byte[] test = ReadFully(newStream, 0);
+            string s = System.Text.Encoding.UTF8.GetString(test, 0, test.Length);
+            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, s);
+
             string responseFromServer = reader.ReadToEnd();
+
+            
+            
 
             Bucket bucket = UnityEngine.JsonUtility.FromJson<Bucket>(responseFromServer);
 
-            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, bucket.startTimeMillis);
+            //DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, responseFromServer);
+        }
+
+        /// <summary>
+        /// Reads data from a stream until the end is reached. The
+        /// data is returned as a byte array. An IOException is
+        /// thrown if any of the underlying IO calls fail.
+        /// </summary>
+        /// <param name="stream">The stream to read data from</param>
+        /// <param name="initialLength">The initial buffer length</param>
+        public static byte[] ReadFully(Stream stream, int initialLength)
+        {
+            // If we've been passed an unhelpful initial length, just
+            // use 32K.
+            if (initialLength < 1)
+            {
+                initialLength = 32768;
+            }
+
+            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "Entered read fully!");
+            byte[] buffer = new byte[initialLength];
+            int read = 0;
+
+
+            int chunk;
+            while ((chunk = stream.Read(buffer, read, buffer.Length - read)) > 0)
+            {
+                read += chunk;
+
+
+                // If we've reached the end of our buffer, check to see if there's
+                // any more information
+                if (read == buffer.Length)
+                {
+                    int nextByte = stream.ReadByte();
+
+
+                    // End of stream? If so, we're done
+                    if (nextByte == -1)
+                    {
+                        return buffer;
+                    }
+
+
+                    // Nope. Resize the buffer, put in the byte we've just
+                    // read, and continue
+                    byte[] newBuffer = new byte[buffer.Length * 2];
+                    Array.Copy(buffer, newBuffer, buffer.Length);
+                    newBuffer[read] = (byte)nextByte;
+                    buffer = newBuffer;
+                    read++;
+                }
+            }
+            // Buffer is now too big. Shrink it.
+            byte[] ret = new byte[read];
+            Array.Copy(buffer, ret, read);
+
+            return ret;
         }
     }
 }
