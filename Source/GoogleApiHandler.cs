@@ -1,6 +1,5 @@
-﻿
-using ColossalFramework.Plugins;
-using Newtonsoft.Json.Linq;
+﻿using ColossalFramework.Plugins;
+using SimpleJSON;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,6 +23,8 @@ namespace CitiesConext
 
         public GoogleApiHandler()
         {
+            now = (long)DateTime.Now.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
+            yesterday = (long)DateTime.Now.AddDays(-1).ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
             InitRefreshRequest();
         }
 
@@ -45,6 +46,7 @@ namespace CitiesConext
             myHttpWebRequest.Headers.Add("Authorization", "Bearer " + token);
             myHttpWebRequest.ContentType = "application/json";
             postData =  "{ 'aggregateBy': [{'dataTypeName':'com.google.step_count.delta','dataSourceId':'derived:com.google.step_count.delta:com.google.android.gms:estimated_steps'}],'bucketByTime':{'durationMillis':86400000},'startTimeMillis':" + yesterday + ",'endTimeMillis':" + now + "}";
+            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "Now and yesterday" + now + yesterday);
         }
 
         public void SendRefreshTokenRequestRequest()
@@ -115,36 +117,42 @@ namespace CitiesConext
         public void SendAccessTokenRequest(string token)
         {
             InitAcessRequest(token);
-            ServicePointManager.ServerCertificateValidationCallback = MyRemoteCertificateValidationCallback;
+            //ServicePointManager.ServerCertificateValidationCallback = MyRemoteCertificateValidationCallback;
             UTF8Encoding encoder = new UTF8Encoding();
             byte[] stepdata = encoder.GetBytes(postData);            
             myHttpWebRequest.ContentLength = stepdata.Length;
-
-            Stream newStream;
-
-            try
+            myHttpWebRequest.GetRequestStream().Write(stepdata, 0, stepdata.Length);
+           
+            using (HttpWebResponse response = (HttpWebResponse)myHttpWebRequest.GetResponse())
             {
-                newStream = myHttpWebRequest.GetRequestStream();
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    Console.WriteLine("Not OK");
+                }
+                using (var sr = new StreamReader(response.GetResponseStream()))
+                {
+                    string str = sr.ReadToEnd();
+                    Bucket bucket = UnityEngine.JsonUtility.FromJson<Bucket>(str);
+
+                    DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, str);
+                    //JSONObject json = new JSONObject();
+                    //json.Add("root", JSON.Parse(str));
+                    JSONObject json = new JSONObject();
+         
+                    //dynamic d = JSON.Parse(str);
+                    //string steps = d.bucket[0].dataset[0].point[0].value[0].intVal;
+                    DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, json.ToString());
+
+                }
             }
-            catch (Exception e)
-            {
-                throw;
-            }
 
-            newStream.Write(stepdata, 0, stepdata.Length);
-            newStream.Close();
+            //StreamReader reader = new StreamReader(newStream);
 
-            WebResponse response = myHttpWebRequest.GetResponse();
+            //string responseFromServer = reader.ReadToEnd();
 
-            newStream = response.GetResponseStream();
+            
 
-            StreamReader reader = new StreamReader(newStream);
-
-            string responseFromServer = reader.ReadToEnd();
-
-            Bucket bucket = UnityEngine.JsonUtility.FromJson<Bucket>(responseFromServer);
-
-            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, bucket.startTimeMillis);
+            
         }
     }
 }
