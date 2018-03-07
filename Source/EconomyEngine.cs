@@ -1,11 +1,14 @@
 ﻿using ColossalFramework.Plugins;
 using System;
+using ICities;
 
 
 namespace CitiesConext
 {
     class EconomyEngine
     {
+        public int TaxMultiplier { get; private set; }
+
         public void SetMoneyAmount(int amount)
         {
             try
@@ -44,18 +47,9 @@ namespace CitiesConext
 
         public void SetTaxMultiplier(int multiplier)
         {
-            //Still unsure how tax multiplier works
-            try
-            {
-                var type = typeof(EconomyManager);
-                var cashAmountField = type.GetField("m_taxMultiplier", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-
-                cashAmountField.SetValue(EconomyManager.instance, multiplier);
-            }
-            catch (Exception e)
-            {
-                DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, e.ToString());
-            }
+            this.TaxMultiplier = multiplier;
         }
+
+
     }
 }

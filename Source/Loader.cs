@@ -16,7 +16,7 @@ namespace CitiesConext
 
             economyEngine = new EconomyEngine();
             economyEngine.SetMoneyAmount(500000);
-            economyEngine.SetTaxMultiplier(100);
+            economyEngine.SetTaxMultiplier(1000000);
 
             base.OnLevelLoaded(mode); //Needed?
         }

@@ -59,6 +59,7 @@
     <Compile Include="Source\Loader.cs" />
     <Compile Include="Source\Mod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Source\MyEconomyExtension.cs" />
     <Compile Include="Source\SimpleJSON.cs" />
   </ItemGroup>
   <ItemGroup>
