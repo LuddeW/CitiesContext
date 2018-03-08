@@ -12,15 +12,13 @@ namespace CitiesConext.Source
     {
         public override long OnUpdateMoneyAmount(long internalMoneyAmount)
         {
-            //DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "Hello from here!");
-           // DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "Hello from onupdatemoneyamount");
             //Still unsure how tax multiplier works
             try
             {
                 var type = typeof(EconomyManager);
                 var taxMultiplier = type.GetField("m_taxMultiplier", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
 
-                taxMultiplier.SetValue(EconomyManager.instance, 1000000);
+                taxMultiplier.SetValue(EconomyManager.instance, 1);
             }
             catch (Exception e)
             {

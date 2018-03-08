@@ -11,12 +11,17 @@ namespace CitiesConext
 
         public void SetMoneyAmount(int amount)
         {
+            long currentAmount;
             try
             {
                 var type = typeof(EconomyManager);
                 var cashAmountField = type.GetField("m_cashAmount", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
 
-                cashAmountField.SetValue(EconomyManager.instance, amount * 100);
+                long.TryParse(cashAmountField.GetValue(EconomyManager.instance).ToString(), out currentAmount);
+                DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "Test");
+                DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, currentAmount.ToString());
+
+                cashAmountField.SetValue(EconomyManager.instance, (amount + currentAmount) * 100);
             }
             catch (Exception e)
             {
