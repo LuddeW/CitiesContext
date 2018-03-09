@@ -15,7 +15,7 @@ namespace CitiesConext
             DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, googleApiHandler.GetSteps().ToString());
 
             economyEngine = new EconomyEngine();
-            economyEngine.SetMoneyAmount(500000);
+            economyEngine.SetMoneyAmount(100000);
             economyEngine.SetTaxMultiplier(1000000);
 
             base.OnLevelLoaded(mode); //Needed?
