@@ -14,11 +14,31 @@ namespace CitiesConext
             googleApiHandler = new GoogleApiHandler();
             DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, googleApiHandler.GetSteps().ToString());
             DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, googleApiHandler.GetAvgSteps().ToString());
-            economyEngine = new EconomyEngine();
-            economyEngine.SetMoneyAmount(100000);
-            economyEngine.SetTaxMultiplier(1000000);
+            int steps = googleApiHandler.GetSteps();
+            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, steps.ToString());
+            InitializeEconomyBonuses(steps);
 
             base.OnLevelLoaded(mode); //Needed?
+        }
+
+        void InitializeEconomyBonuses(int steps)
+        {
+            economyEngine = new EconomyEngine();
+
+            economyEngine.SetMoneyAmount(CalculateCashBonus(steps));
+            
+        }
+
+        int CalculateCashBonus(int steps)
+        {
+            if (steps < 10000)
+            {
+                return 0;
+            }
+            else
+            {
+                return steps * 5;
+            }
         }
     }
 }
