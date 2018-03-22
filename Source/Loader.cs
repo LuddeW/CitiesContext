@@ -13,7 +13,7 @@ namespace CitiesConext
         {
             googleApiHandler = new GoogleApiHandler();
             DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, googleApiHandler.GetSteps().ToString());
-
+            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, googleApiHandler.GetAvgSteps().ToString());
             economyEngine = new EconomyEngine();
             economyEngine.SetMoneyAmount(100000);
             economyEngine.SetTaxMultiplier(1000000);
