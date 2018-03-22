@@ -14,20 +14,28 @@ namespace CitiesConext
         string accessToken = "";
 
         long now;
-        long yesterday;
+        long then;
 
         public GoogleApiHandler()
         {
             now = (long)DateTime.Now.ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
-            yesterday = (long)DateTime.Now.AddDays(-1).ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
-
+            then = (long)DateTime.Now.AddDays(-1).ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
         }
 
         public int GetSteps()
         {
+            then = (long)DateTime.Now.AddDays(-1).ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
+            //HÄMTA DEN FÖRSTA
             InitRefreshRequest();
             SendRefreshTokenRequest();
-            InitStepRequest();
+            InitStepRequest(then);
+            return SendStepRequest();
+        }
+
+        public int GetAvgSteps()
+        {
+            then = (long)DateTime.Now.AddDays(-3).ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
+            InitStepRequest(then);
             return SendStepRequest();
         }
 
@@ -39,14 +47,14 @@ namespace CitiesConext
             postData = "client_id=201588886496-3a2ot27qinou8es6ttdj5e7b9ol66d3g.apps.googleusercontent.com&client_secret=c0GoDGqJFbIf1hlx_h-RoCAm&refresh_token=1/5HYlkTysflKXeLC7pMMU9Xn0AtwPpcnB7eJZizhj2Ts&grant_type=refresh_token";
         }
 
-        void InitStepRequest()
+        void InitStepRequest(long then)
         {
             myHttpWebRequest = (HttpWebRequest)WebRequest.Create("https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate");
             myHttpWebRequest.Method = "POST";
             myHttpWebRequest.ContentType = "application/x-www-form-urlencoded";
             myHttpWebRequest.Headers.Add("Authorization", "Bearer " + accessToken);
             myHttpWebRequest.ContentType = "application/json";
-            postData =  "{ 'aggregateBy': [{'dataTypeName':'com.google.step_count.delta','dataSourceId':'derived:com.google.step_count.delta:com.google.android.gms:estimated_steps'}],'bucketByTime':{'durationMillis':86400000},'startTimeMillis':" + yesterday + ",'endTimeMillis':" + now + "}";
+            postData =  "{ 'aggregateBy': [{'dataTypeName':'com.google.step_count.delta','dataSourceId':'derived:com.google.step_count.delta:com.google.android.gms:estimated_steps'}],'bucketByTime':{'durationMillis':86400000},'startTimeMillis':" + then + ",'endTimeMillis':" + now + "}";
         }
 
         void SendRefreshTokenRequest()
@@ -111,7 +119,7 @@ namespace CitiesConext
         }
         int SendStepRequest()
         {
-            InitStepRequest();
+            //InitStepRequest();
             UTF8Encoding encoder = new UTF8Encoding();
             byte[] stepdata = encoder.GetBytes(postData);            
             myHttpWebRequest.ContentLength = stepdata.Length;
@@ -129,7 +137,11 @@ namespace CitiesConext
 
                     string step = getBetween(str, "intVal\": ", ",");
 
-                    return int.Parse(step);
+                    int steps = 0;
+                    Int32.TryParse(step, out steps);
+                    steps = steps / 3;
+
+                    return steps;
                 }
             }                
         }
