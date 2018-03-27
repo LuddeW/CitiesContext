@@ -46,7 +46,7 @@ namespace CitiesConext
         {
             if (steps < 10000)
             {
-                return 0;
+                return 1;
             }
             else
             {
