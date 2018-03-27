@@ -14,30 +14,30 @@ namespace CitiesConext
             googleApiHandler = new GoogleApiHandler();
             DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, googleApiHandler.GetSteps().ToString());
             DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, googleApiHandler.GetAvgSteps().ToString());
-            int steps = googleApiHandler.GetSteps();
-            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, steps.ToString());
-            InitializeEconomyBonuses(steps);
+            int avgSteps = googleApiHandler.GetSteps();
+            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, avgSteps.ToString());
+            InitializeEconomyBonuses(avgSteps);
 
             base.OnLevelLoaded(mode); //Needed?
         }
 
-        void InitializeEconomyBonuses(int steps)
+        void InitializeEconomyBonuses(int avgSteps)
         {
             economyEngine = new EconomyEngine();
 
-            economyEngine.SetMoneyAmount(CalculateCashBonus(steps));
+            economyEngine.SetMoneyAmount(CalculateCashBonus(avgSteps));
             
         }
 
-        int CalculateCashBonus(int steps)
+        int CalculateCashBonus(int avgSteps)
         {
-            if (steps < 10000)
+            if (avgSteps < 10000)
             {
                 return 0;
             }
             else
             {
-                return steps * 5;
+                return avgSteps * 5;
             }
         }
     }
