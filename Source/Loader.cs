@@ -11,11 +11,9 @@ namespace CitiesConext
 
         public override void OnLevelLoaded(LoadMode mode)
         {
+            
             googleApiHandler = new GoogleApiHandler();
-            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, googleApiHandler.GetSteps().ToString());
-            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, googleApiHandler.GetAvgSteps().ToString());
             int steps = googleApiHandler.GetSteps();
-            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, steps.ToString());
             InitializeEconomyBonuses(steps);
 
             base.OnLevelLoaded(mode); //Needed?

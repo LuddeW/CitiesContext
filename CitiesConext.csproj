@@ -54,8 +54,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Source\AcessKeyModel.cs" />
+    <Compile Include="Source\ChirperInfoPresenter.cs" />
     <Compile Include="Source\EconomyEngine.cs" />
     <Compile Include="Source\GoogleApiHandler.cs" />
+    <Compile Include="Source\InfoMessage.cs" />
     <Compile Include="Source\Loader.cs" />
     <Compile Include="Source\Mod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
