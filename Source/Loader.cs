@@ -12,32 +12,29 @@ namespace CitiesConext
         public override void OnLevelLoaded(LoadMode mode)
         {
             googleApiHandler = new GoogleApiHandler();
-            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, googleApiHandler.GetSteps().ToString());
-            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, googleApiHandler.GetAvgSteps().ToString());
-            int avgSteps = googleApiHandler.GetSteps();
-            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, avgSteps.ToString());
-            InitializeEconomyBonuses(avgSteps);
-
+            int steps = googleApiHandler.GetSteps();
+            InitializeEconomyBonuses(steps);
+            MessageManager.instance.QueueMessage(new InfoMessage("Step-master", "Your total steps: " + steps + " Results from this will be etc etc etc..."));
             base.OnLevelLoaded(mode); //Needed?
         }
 
-        void InitializeEconomyBonuses(int avgSteps)
+        void InitializeEconomyBonuses(int steps)
         {
             economyEngine = new EconomyEngine();
 
-            economyEngine.SetMoneyAmount(CalculateCashBonus(avgSteps));
+            economyEngine.SetMoneyAmount(CalculateCashBonus(steps));
             
         }
 
-        int CalculateCashBonus(int avgSteps)
+        int CalculateCashBonus(int steps)
         {
-            if (avgSteps < 10000)
+            if (steps < 10000)
             {
                 return 0;
             }
             else
             {
-                return avgSteps * 5;
+                return steps * 5;
             }
         }
     }

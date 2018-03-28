@@ -7,7 +7,7 @@ using ICities;
 using ColossalFramework;
 using UnityEngine;
 
-namespace CitiesConext.Source
+namespace CitiesConext
 {
     public class InfoMessage : MessageBase
     {

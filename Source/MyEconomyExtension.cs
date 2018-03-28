@@ -20,7 +20,7 @@ namespace CitiesConext
                 var type = typeof(EconomyManager);
                 var taxMultiplier = type.GetField("m_taxMultiplier", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
 
-                taxMultiplier.SetValue(EconomyManager.instance, taxBonus * 100); // *2000 should be about right, but needs more testing
+                taxMultiplier.SetValue(EconomyManager.instance, 2 * 100000); // *2000 should be about right, but needs more testing
             }
             catch (Exception e)
             {
@@ -38,7 +38,7 @@ namespace CitiesConext
 
             taxBonus = CalculateTaxBonus(steps);
             SetConstructionCostBonuses(steps);
-
+            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "EconomyExtension is created and electricityBonus = " + electricityCostBonus);
 
         }
 
@@ -93,7 +93,7 @@ namespace CitiesConext
             {
                 return (int)(originalConstructionCost * healthCareCostBonus);
             }
-            else if (service == Service.Education)
+            else if (service == Service.Electricity)
             {
                 return (int)(originalConstructionCost * electricityCostBonus);
             }
