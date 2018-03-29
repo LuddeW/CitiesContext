@@ -43,7 +43,7 @@ namespace CitiesConext
         }
 
         int CalculateTaxBonus(float steps)
-        {
+        {//ssss
             if (steps < 8000)
             {
                 return (int)(0.7 * taxVariable);
