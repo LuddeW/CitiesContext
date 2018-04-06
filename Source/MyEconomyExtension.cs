@@ -10,6 +10,7 @@ namespace CitiesConext
         float educationCostBonus = 1;
         float electricityCostBonus = 1;
         float healthCareCostBonus = 1;
+        int taxVariable = 15000;
 
         GoogleApiHandler apiHandler;
         public override long OnUpdateMoneyAmount(long internalMoneyAmount)
@@ -20,7 +21,8 @@ namespace CitiesConext
                 var type = typeof(EconomyManager);
                 var taxMultiplier = type.GetField("m_taxMultiplier", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
 
-                taxMultiplier.SetValue(EconomyManager.instance, 2 * 100000); // *2000 should be about right, but needs more testing
+                taxMultiplier.SetValue(EconomyManager.instance, CalculateTaxBonus(15000f));
+                //DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, CalculateTaxBonus(8500).ToString());
             }
             catch (Exception e)
             {
@@ -35,22 +37,20 @@ namespace CitiesConext
 
             apiHandler = new GoogleApiHandler();
             steps = apiHandler.GetSteps();
-
-            taxBonus = CalculateTaxBonus(steps);
             SetConstructionCostBonuses(steps);
             DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "EconomyExtension is created and electricityBonus = " + electricityCostBonus);
 
         }
 
-        int CalculateTaxBonus(int steps)
-        {
-            if (steps < 10000)
+        int CalculateTaxBonus(float steps)
+        {//ssss
+            if (steps < 8000)
             {
-                return 1;
+                return (int)(0.7 * taxVariable);
             }
             else
             {
-                return ((steps % 10000) / 1000) + 1;
+                return (int)((steps / 10000f) * taxVariable);               
             }
 
         }
