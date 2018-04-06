@@ -63,6 +63,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\MyEconomyExtension.cs" />
     <Compile Include="Source\SimpleJSON.cs" />
+    <Compile Include="Source\SpeedModel.cs" />
+    <Compile Include="Source\stringExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

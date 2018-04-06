@@ -13,6 +13,8 @@ namespace CitiesConext
         {
             googleApiHandler = new GoogleApiHandler();
             int steps = googleApiHandler.GetSteps();
+            SpeedModel a = googleApiHandler.GetSpeedModels()[0];
+            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "SpeedModel: " + a.startTime);
             InitializeEconomyBonuses(steps);
             MessageManager.instance.QueueMessage(new InfoMessage("Step-master", "Your total steps: " + steps + " Results from this will be etc etc etc..."));
             base.OnLevelLoaded(mode); //Needed?
