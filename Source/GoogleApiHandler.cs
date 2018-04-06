@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using ColossalFramework.Plugins;
 
 namespace CitiesConext
 {
@@ -12,6 +14,8 @@ namespace CitiesConext
         HttpWebRequest myHttpWebRequest;
         string postData;
         string accessToken = "";
+        List<SpeedModel> speedModels = new List<SpeedModel>();
+                private static string refresh_token = "1/gWVEDEyeoCQ9AgOLX-TqeVlQOT6NFrvs5cN69pRgtds";
 
         long now;
         long then;
@@ -39,12 +43,43 @@ namespace CitiesConext
             return SendStepRequest();
         }
 
+        public List<SpeedModel> GetSpeedModels()
+        {
+            InitSpeedRequest();
+            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "Entering Get speed models");
+            UTF8Encoding encoder = new UTF8Encoding();
+            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "encoder created");
+            byte[] speedData = encoder.GetBytes(postData);
+            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "speeddata created");
+            myHttpWebRequest.ContentLength = speedData.Length;
+            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "Speedlength collected");
+            myHttpWebRequest.GetRequestStream().Write(speedData, 0, speedData.Length);
+            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "GetRequest called");
+            string str;
+
+            using (HttpWebResponse response = (HttpWebResponse)myHttpWebRequest.GetResponse())
+            {
+                DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "Inside the using statement");
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "NOT OK response from GetSpeeds");
+                }
+                using (var sr = new StreamReader(response.GetResponseStream()))
+                {
+                    DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "trying to read from sr from inside second using statement");
+                    str = sr.ReadToEnd();
+                }
+            }
+            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "Calling getAllSpeedFromJson()");
+            return getAllSpeedsFromJson(str, "fpVal\": ", "apVal");
+        }
+
         void InitRefreshRequest()
         {
             myHttpWebRequest = (HttpWebRequest)WebRequest.Create("https://www.googleapis.com/oauth2/v4/token");
             myHttpWebRequest.Method = "POST";
             myHttpWebRequest.ContentType = "application/x-www-form-urlencoded";
-            postData = "client_id=201588886496-3a2ot27qinou8es6ttdj5e7b9ol66d3g.apps.googleusercontent.com&client_secret=c0GoDGqJFbIf1hlx_h-RoCAm&refresh_token=1/5HYlkTysflKXeLC7pMMU9Xn0AtwPpcnB7eJZizhj2Ts&grant_type=refresh_token";
+            postData = "client_id=201588886496-3a2ot27qinou8es6ttdj5e7b9ol66d3g.apps.googleusercontent.com&client_secret=c0GoDGqJFbIf1hlx_h-RoCAm&refresh_token=" + refresh_token + "&grant_type=refresh_token";
         }
 
         void InitStepRequest(long then)
@@ -55,6 +90,16 @@ namespace CitiesConext
             myHttpWebRequest.Headers.Add("Authorization", "Bearer " + accessToken);
             myHttpWebRequest.ContentType = "application/json";
             postData =  "{ 'aggregateBy': [{'dataTypeName':'com.google.step_count.delta','dataSourceId':'derived:com.google.step_count.delta:com.google.android.gms:estimated_steps'}],'bucketByTime':{'durationMillis':86400000},'startTimeMillis':" + then + ",'endTimeMillis':" + now + "}";
+        }
+
+        public void InitSpeedRequest()
+        {
+            myHttpWebRequest = (HttpWebRequest)WebRequest.Create("https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate");
+            myHttpWebRequest.Method = "POST";
+            myHttpWebRequest.ContentType = "application/x-www-form-urlencoded";
+            myHttpWebRequest.Headers.Add("Authorization", "Bearer " + accessToken);
+            myHttpWebRequest.ContentType = "application/json";
+            postData = "{ 'aggregateBy':[{'dataTypeName':'com.google.speed','':''}],'bucketByTime':{'durationMillis':'3600000'},'startTimeMillis':'1522101600000','endTimeMillis':'1522274400000'}";
         }
 
         void SendRefreshTokenRequest()
@@ -129,7 +174,7 @@ namespace CitiesConext
             {
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
-                    Console.WriteLine("Not OK");
+                    DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "NOT OK response from SendStepReq");
                 }
                 using (var sr = new StreamReader(response.GetResponseStream()))
                 {
@@ -160,5 +205,103 @@ namespace CitiesConext
                 return "";
             }
         }
+
+        public List<SpeedModel> getAllSpeedsFromJson(string strSource, string strStart, string strEnd)
+        {
+            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "Entering getAllSpeedsFromJson");
+            List<int> Start, End;
+            if (strSource.Contains(strStart) && strSource.Contains(strEnd))
+            {
+                Start = strSource.AllIndexesOf(strStart);
+                End = strSource.AllIndexesOf(strEnd);
+
+                //string retStr = strSource.Substring(Start, End - Start);
+
+                List<float> retList = new List<float>();
+                string valueString = "";
+                for (int i = 0; i < Start.Count; i++)
+                {
+                    valueString = "";
+                    for (int j = Start[i] + strStart.Length; j < End[i] - (strEnd.Length + 8); j++)
+                    {
+                        valueString += strSource[j];
+                    }
+                    float value;
+                    float.TryParse(valueString, out value);
+                    retList.Add(value);
+
+                    if (retList.Count == 3) //Now we have all ´three speed values read. We now need to find end and start time.
+                    {
+                        SpeedModel sm = new SpeedModel();
+                        sm.speeds.Add(retList[0]);
+                        sm.speeds.Add(retList[1]);
+                        sm.speeds.Add(retList[2]);
+                        speedModels.Add(sm);
+                        retList.Clear();
+
+                    }
+                }
+                DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "Calling SetAllStartEnd()");
+                SetAllStartEndTimesForSpeedModels(strSource, speedModels);
+            }
+
+            return speedModels;
+        }
+
+        public void SetAllStartEndTimesForSpeedModels(string strSource, List<SpeedModel> speedModels)
+        {
+            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "Entering SetAllStartEnds");
+            //StartTimes
+            string strStart, strEnd;
+            strStart = "startTimeNanos";
+            strEnd = "endTimeNanos";
+
+            List<int> Start, End;
+            if (strSource.Contains(strStart) && strSource.Contains(strEnd))
+            {
+                Start = strSource.AllIndexesOf(strStart); //Fill list with all start indexes of the stat word
+                End = strSource.AllIndexesOf(strEnd); //-""-  for the end word
+                List<long> startTimes = new List<long>(); //List that will hold all start times
+                string startTimeString;
+                for (int i = 0; i < Start.Count; i++)
+                {
+                    startTimeString = "";
+                    for (int j = Start[i] + strStart.Length + 4; j < End[i] - (strEnd.Length - 1); j++) //Start at the start of start word + length of the word plus some spaces. End at end minus a space
+                    {
+                        startTimeString += strSource[j];
+                    }
+                    long parsedStartTime;
+                    long.TryParse(startTimeString, out parsedStartTime); //Parse tge start time
+                    speedModels[i].startTime = parsedStartTime; //Set the start time of the correct speed model
+                }
+                Start.Clear();
+                End.Clear(); //Clear them for next session
+            }
+
+            //EndTimes
+            strEnd = "dataTypeName";
+            strStart = "endTimeNanos";
+
+            if (strSource.Contains(strStart) && strSource.Contains(strEnd))
+            {
+                Start = strSource.AllIndexesOf(strStart); //Fill list with all start indexes of the stat word
+                End = strSource.AllIndexesOf(strEnd); //-""-  for the end word
+                List<long> startTimes = new List<long>(); //List that will hold all start times
+                string startTimeString;
+                for (int i = 0; i < Start.Count; i++)
+                {
+                    startTimeString = "";
+                    for (int j = Start[i] + strStart.Length + 4; j < End[i] - (strEnd.Length - 1); j++) //Start at the start of start word + length of the word plus some spaces. End at end minus a space
+                    {
+                        startTimeString += strSource[j];
+                    }
+                    long parsedStartTime;
+                    long.TryParse(startTimeString, out parsedStartTime); //Parse tge start time
+                    speedModels[i].endtime = parsedStartTime; //Set the start time of the correct speed model
+                }
+            }
+
+        }
+
     }
 }
