@@ -15,7 +15,7 @@ namespace CitiesConext
         string postData;
         string accessToken = "";
         List<SpeedModel> speedModels = new List<SpeedModel>();
-                private static string refresh_token = "1/gWVEDEyeoCQ9AgOLX-TqeVlQOT6NFrvs5cN69pRgtds";
+        private static string refresh_token = "1/gWVEDEyeoCQ9AgOLX-TqeVlQOT6NFrvs5cN69pRgtds";
 
         long now;
         long then;
@@ -94,12 +94,15 @@ namespace CitiesConext
 
         public void InitSpeedRequest()
         {
+            double yMorning = (long)DateTime.Today.AddHours(-15).ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds; //09 yesterday morning
+            double yEvening = (long)DateTime.Today.AddHours(-6).ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds; //18 yesterday evning
+
             myHttpWebRequest = (HttpWebRequest)WebRequest.Create("https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate");
             myHttpWebRequest.Method = "POST";
             myHttpWebRequest.ContentType = "application/x-www-form-urlencoded";
             myHttpWebRequest.Headers.Add("Authorization", "Bearer " + accessToken);
             myHttpWebRequest.ContentType = "application/json";
-            postData = "{ 'aggregateBy':[{'dataTypeName':'com.google.speed','':''}],'bucketByTime':{'durationMillis':'3600000'},'startTimeMillis':'1522101600000','endTimeMillis':'1522274400000'}";
+            postData = "{ 'aggregateBy':[{'dataTypeName':'com.google.speed','':''}],'bucketByTime':{'durationMillis':'3600000'},'startTimeMillis':'" + yMorning + "','endTimeMillis':'" + yEvening + "'}";
         }
 
         void SendRefreshTokenRequest()

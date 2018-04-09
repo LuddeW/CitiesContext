@@ -1,6 +1,7 @@
 ﻿using ColossalFramework.Plugins;
 using ICities;
 using System;
+using System.Collections.Generic;
 
 namespace CitiesConext
 {
@@ -55,6 +56,10 @@ namespace CitiesConext
 
         }
 
+        /// <summary>
+        /// Bonuses from number of steps
+        /// </summary>
+        /// <param name="steps"></param>
         void SetConstructionCostBonuses(int steps)
         {
             if (steps < 5000)
@@ -81,6 +86,19 @@ namespace CitiesConext
                 healthCareCostBonus = 0.3f;
                 electricityCostBonus = 0.3f;
             }
+        }
+
+        /// <summary>
+        /// Bonuses from active hours. Inactive hours is every hour that has no speed data between 09 and 18
+        /// </summary>
+        /// <param name="nrOfInactiveHours"></param>
+        public void SetConstructionBonusesFromActiveHours()
+        {
+            List<SpeedModel> speedModels = apiHandler.GetSpeedModels();  //Gets speeds for 9 hours yesterday. If every hour has been active speedModels.Length should be 9
+            int nrOfInactiveHours = 9 - speedModels.Count;
+
+
+
         }
 
         public override int OnGetConstructionCost(int originalConstructionCost, Service service, SubService subService, Level level)
