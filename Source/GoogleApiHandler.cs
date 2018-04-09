@@ -15,7 +15,9 @@ namespace CitiesConext
         string postData;
         string accessToken = "";
         List<SpeedModel> speedModels = new List<SpeedModel>();
-        private static string refresh_token = "1/gWVEDEyeoCQ9AgOLX-TqeVlQOT6NFrvs5cN69pRgtds";
+        private static string refresh_token = "1/hGTNfC-LKRsYk8ms0xrZeJsj1TsXfr11m9UqDx285gw";
+        private static string client_id = "201588886496-h7an999j4h8sdir55q697m3svsta00ei.apps.googleusercontent.com";
+        private static string client_secret = "PuaqSlu3cyS6KAm7E9iaMBYN";
 
         long now;
         long then;
@@ -79,7 +81,7 @@ namespace CitiesConext
             myHttpWebRequest = (HttpWebRequest)WebRequest.Create("https://www.googleapis.com/oauth2/v4/token");
             myHttpWebRequest.Method = "POST";
             myHttpWebRequest.ContentType = "application/x-www-form-urlencoded";
-            postData = "client_id=201588886496-3a2ot27qinou8es6ttdj5e7b9ol66d3g.apps.googleusercontent.com&client_secret=c0GoDGqJFbIf1hlx_h-RoCAm&refresh_token=" + refresh_token + "&grant_type=refresh_token";
+            postData = "client_id=" + client_id + "&client_secret=" + client_secret + "&refresh_token=" + refresh_token + "&grant_type=refresh_token";
         }
 
         void InitStepRequest(long then)
