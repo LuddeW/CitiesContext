@@ -15,9 +15,9 @@ namespace CitiesConext
         string postData;
         string accessToken = "";
         List<SpeedModel> speedModels = new List<SpeedModel>();
-        private static string refresh_token = "1/hGTNfC-LKRsYk8ms0xrZeJsj1TsXfr11m9UqDx285gw";
-        private static string client_id = "201588886496-h7an999j4h8sdir55q697m3svsta00ei.apps.googleusercontent.com";
-        private static string client_secret = "PuaqSlu3cyS6KAm7E9iaMBYN";
+        private static string refresh_token = "1/dDNILoBdQmQWNtGpet6UA4xihcklLZhUscP7F4FhrJw";
+        private static string client_id = "191581576086-p8sjp96igq15i55ijqof15bbf5d43kjn.apps.googleusercontent.com";
+        private static string client_secret = "7eZmyhC3LJX8FLhHeW0RbqZO";
 
         long now;
         long then;
@@ -41,7 +41,7 @@ namespace CitiesConext
         public int GetAvgSteps()
         {
             then = (long)DateTime.Now.AddDays(-3).ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
-            InitStepRequest(then);
+            InitAvgStepRequest(then);
             int avgSteps = SendStepRequest();
             return avgSteps / 3;
         }
@@ -93,6 +93,16 @@ namespace CitiesConext
             myHttpWebRequest.Headers.Add("Authorization", "Bearer " + accessToken);
             myHttpWebRequest.ContentType = "application/json";
             postData =  "{ 'aggregateBy': [{'dataTypeName':'com.google.step_count.delta','dataSourceId':'derived:com.google.step_count.delta:com.google.android.gms:estimated_steps'}],'bucketByTime':{'durationMillis':86400000},'startTimeMillis':" + then + ",'endTimeMillis':" + now + "}";
+        }
+
+        void InitAvgStepRequest(long then)
+        {
+            myHttpWebRequest = (HttpWebRequest)WebRequest.Create("https://www.googleapis.com/fitness/v1/users/me/dataset:aggregate");
+            myHttpWebRequest.Method = "POST";
+            myHttpWebRequest.ContentType = "application/x-www-form-urlencoded";
+            myHttpWebRequest.Headers.Add("Authorization", "Bearer " + accessToken);
+            myHttpWebRequest.ContentType = "application/json";
+            postData = "{ 'aggregateBy': [{'dataTypeName':'com.google.step_count.delta','dataSourceId':'derived:com.google.step_count.delta:com.google.android.gms:estimated_steps'}],'bucketByTime':{'durationMillis':259200000},'startTimeMillis':" + then + ",'endTimeMillis':" + now + "}";
         }
 
         public void InitSpeedRequest()
