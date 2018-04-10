@@ -39,7 +39,7 @@ namespace CitiesConext
             apiHandler = new GoogleApiHandler();
             steps = apiHandler.GetSteps();
             SetConstructionCostBonuses(steps);
-            DebugOutputPanel.AddMessage(PluginManager.MessageType.Message, "EconomyExtension is created and electricityBonus = " + electricityCostBonus);
+            SetConstructionBonusesFromActiveHours();
 
         }
 
@@ -65,25 +65,21 @@ namespace CitiesConext
             if (steps < 5000)
             {
                 educationCostBonus = 1.7f;
-                healthCareCostBonus = 1.7f;
                 electricityCostBonus = 1.7f;
             }
             else if (steps >= 5000 && steps < 10000)
             {
                 educationCostBonus = 1f;
-                healthCareCostBonus = 1f;
                 electricityCostBonus = 1f;
             }
             else if (steps >= 10000 && steps < 20000)
             {
                 educationCostBonus = 0.6f;
-                healthCareCostBonus = 0.6f;
                 electricityCostBonus = 0.6f;
             }
             else
             {
                 educationCostBonus = 0.3f;
-                healthCareCostBonus = 0.3f;
                 electricityCostBonus = 0.3f;
             }
         }
@@ -97,8 +93,18 @@ namespace CitiesConext
             List<SpeedModel> speedModels = apiHandler.GetSpeedModels();  //Gets speeds for 9 hours yesterday. If every hour has been active speedModels.Length should be 9
             int nrOfInactiveHours = 9 - speedModels.Count;
 
-
-
+            if (nrOfInactiveHours == 9)
+            {
+                healthCareCostBonus = 1.7f;
+            }
+            else if (nrOfInactiveHours < 9 && nrOfInactiveHours >= 5)
+            {
+                healthCareCostBonus = 1.3f;
+            }
+            else
+            {
+                healthCareCostBonus = 0.75f;
+            }
         }
 
         public override int OnGetConstructionCost(int originalConstructionCost, Service service, SubService subService, Level level)
