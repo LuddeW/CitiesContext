@@ -42,7 +42,8 @@ namespace CitiesConext
         {
             then = (long)DateTime.Now.AddDays(-3).ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
             InitStepRequest(then);
-            return SendStepRequest();
+            int avgSteps = SendStepRequest();
+            return avgSteps / 3;
         }
 
         public List<SpeedModel> GetSpeedModels()
@@ -189,7 +190,6 @@ namespace CitiesConext
 
                     int steps = 0;
                     Int32.TryParse(step, out steps);
-                    steps = steps / 3;
 
                     return steps;
                 }
