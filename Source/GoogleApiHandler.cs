@@ -15,7 +15,7 @@ namespace CitiesConext
         string postData;
         string accessToken = "";
         List<SpeedModel> speedModels = new List<SpeedModel>();
-        private static string refresh_token = "1/gWVEDEyeoCQ9AgOLX-TqeVlQOT6NFrvs5cN69pRgtds";
+        private static string refresh_token = "1/dDNILoBdQmQWNtGpet6UA4xihcklLZhUscP7F4FhrJw";
 
         long now;
         long then;
@@ -40,7 +40,8 @@ namespace CitiesConext
         {
             then = (long)DateTime.Now.AddDays(-3).ToUniversalTime().Subtract(new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
             InitStepRequest(then);
-            return SendStepRequest();
+            int avgSteps = SendStepRequest();
+            return avgSteps / 3;
         }
 
         public List<SpeedModel> GetSpeedModels()
@@ -79,7 +80,7 @@ namespace CitiesConext
             myHttpWebRequest = (HttpWebRequest)WebRequest.Create("https://www.googleapis.com/oauth2/v4/token");
             myHttpWebRequest.Method = "POST";
             myHttpWebRequest.ContentType = "application/x-www-form-urlencoded";
-            postData = "client_id=201588886496-3a2ot27qinou8es6ttdj5e7b9ol66d3g.apps.googleusercontent.com&client_secret=c0GoDGqJFbIf1hlx_h-RoCAm&refresh_token=" + refresh_token + "&grant_type=refresh_token";
+            postData = "client_id=191581576086-p8sjp96igq15i55ijqof15bbf5d43kjn.apps.googleusercontent.com&client_secret=7eZmyhC3LJX8FLhHeW0RbqZO&refresh_token=" + refresh_token + "&grant_type=refresh_token";
         }
 
         void InitStepRequest(long then)
@@ -187,7 +188,6 @@ namespace CitiesConext
 
                     int steps = 0;
                     Int32.TryParse(step, out steps);
-                    steps = steps / 3;
 
                     return steps;
                 }
