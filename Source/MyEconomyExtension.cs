@@ -64,8 +64,8 @@ namespace CitiesConext
         {
             if (steps < 5000)
             {
-                educationCostBonus = 1.7f;
-                electricityCostBonus = 1.7f;
+                educationCostBonus = 1.3f;
+                electricityCostBonus = 1.3f;
             }
             else if (steps >= 5000 && steps < 10000)
             {
@@ -95,11 +95,11 @@ namespace CitiesConext
 
             if (nrOfInactiveHours == 9)
             {
-                healthCareCostBonus = 1.7f;
+                healthCareCostBonus = 1.4f;
             }
             else if (nrOfInactiveHours < 9 && nrOfInactiveHours >= 5)
             {
-                healthCareCostBonus = 1.3f;
+                healthCareCostBonus = 1.1f;
             }
             else
             {
