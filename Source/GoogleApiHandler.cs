@@ -15,9 +15,9 @@ namespace CitiesConext
         string postData;
         string accessToken = "";
         List<SpeedModel> speedModels = new List<SpeedModel>();
-        private static string refresh_token = "1/dDNILoBdQmQWNtGpet6UA4xihcklLZhUscP7F4FhrJw";
-        private static string client_id = "191581576086-p8sjp96igq15i55ijqof15bbf5d43kjn.apps.googleusercontent.com";
-        private static string client_secret = "7eZmyhC3LJX8FLhHeW0RbqZO";
+        private static string refresh_token = "1/fsklTpeWGTdYt4QfDXFRexlqkIlSE2vddDxPdzR3-7s";
+        private static string client_id = "643711194524-fvtr98u75reat0jh3e3re2dh2vnpjimh.apps.googleusercontent.com";
+        private static string client_secret = "IZd9zOGgYkq9Zkdu4EE0W9RT";
 
         long now;
         long then;
