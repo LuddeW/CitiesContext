@@ -11,8 +11,9 @@ namespace CitiesConext
         float educationCostBonus = 1;
         float electricityCostBonus = 1;
         float healthCareCostBonus = 1;
-        int taxVariable = 15000;
+        int taxVariable = 9000;
         int avgSteps = 10000;
+        
 
         GoogleApiHandler apiHandler;
         public override long OnUpdateMoneyAmount(long internalMoneyAmount)
@@ -35,7 +36,8 @@ namespace CitiesConext
 
         public override void OnCreated(IEconomy economy)
         {
-            int steps;
+            int steps = 8000;
+            
 
             apiHandler = new GoogleApiHandler();
             steps = apiHandler.GetSteps();
@@ -49,11 +51,19 @@ namespace CitiesConext
         {//ssss
             if (steps < 8000)
             {
-                return (int)(0.7 * taxVariable);
+                return (int)(0.92f * taxVariable);
+            }
+            else if (steps <= 10000 && steps >= 8000)
+            {
+                return (int)(1.0f * taxVariable);
+            }
+            else if (steps <= 12000 && steps > 10000)
+            {
+                return (int)(1.03f * taxVariable);               
             }
             else
             {
-                return (int)((steps / 10000f) * taxVariable);               
+                return (int)(1.07f * taxVariable);
             }
 
         }
